@@ -3,14 +3,14 @@
 User::User()
 {
 	_logged = false;
+	_ePass = std::make_shared<EncodePassword>();
 }
 
 User::~User() {}
 
 bool User::checkLogIn(uInfosPtr &myUInfos) {
 	if ((myUInfos->getUsername() == "") || (myUInfos->getPasswordOne() == "")) {
-		std::cout << "Error: Empty Username/Pasword" << std::endl;
-		return false;
+		ERREMPTYUSERPASS
 	}
 	return true;
 }
@@ -22,8 +22,12 @@ bool User::logIn(uInfosPtr &myUInfos, sqlPtr &mySql) {
 	std::string whereCondition = "username='"
 	+ myUInfos->getUsername()
 	+ "' AND password='"
-	+ myUInfos->getPasswordOne()
-	+ "'";
+	+ std::to_string(
+		this->_ePass->encode(
+			myUInfos->getUsername(),
+			myUInfos->getPasswordOne()
+		)
+	) + "'";
 	std::map<std::string,std::string> param = {
 		{"toSelect", "*"},
 		{"where", whereCondition}
@@ -34,47 +38,42 @@ bool User::logIn(uInfosPtr &myUInfos, sqlPtr &mySql) {
 	std::string request = rb.getFinalRequest();
 
 	if (!mySql->SqlQuery(request)) {
-		std::cout << "Error: SqlQuery not working" << std::endl;
-		return false;
-	}
-	if (!mySql->fetchResult()) {
-		std::cout << "Error: fetch results" << std::endl;
-		return false;
-	}
-	if (mySql->getTabFetchResults().empty()) {
-		std::cout << "Error: incorrect username/password" << std::endl;
-		return false;
+		ERRQUERYSQL
+	} if (!mySql->fetchResult()) {
+		ERRFETCHRESULTS
+	} if (mySql->getTabFetchResults().empty()) {
+		ERREMPTYRESTAB
 	}
 	this->_logged = true;
 	return true;
 }
 
-bool User::checkSignIn(uInfosPtr &myUInfos) {
+bool User::checkSignUp(uInfosPtr &myUInfos) {
 	if (!myUInfos->isSignIn()) {
-		std::cout << "Error: User OBJECT not in signIn mode" << std::endl;
-		return false;
+		ERRINFOSNOTOBJMODE
 	}
 	if ((myUInfos->getUsername() == "")
 	|| (myUInfos->getPasswordOne() == "")
 	|| (myUInfos->getPasswordTwo() == "")) {
-		std::cout << "Error: Empty Username/Pasword" << std::endl;
-		return false;
+		ERREMPTYUSERPASS
 	}
 	if (myUInfos->getPasswordOne() != myUInfos->getPasswordTwo()) {
-		std::cout << "Error: Different passwords" << std::endl;
-		return false;
+		ERRNOTSAMEPASS
 	}
 	return true;
 }
 
-bool User::signIn(uInfosPtr &myUInfos, sqlPtr &mySql) {
-	if (!this->checkSignIn(myUInfos))
+bool User::signUp(uInfosPtr &myUInfos, sqlPtr &mySql) {
+	if (!this->checkSignUp(myUInfos))
 		return false;
 
 	std::map<std::string,std::string> param = {
 		{"id", "NULL"},
 		{"username", myUInfos->getUsername()},
-		{"password", myUInfos->getPasswordOne()},
+		{"password", std::to_string(this->_ePass->encode(
+			myUInfos->getUsername(),
+			myUInfos->getPasswordOne()
+		))},
 		{"mail", myUInfos->getMail()}
 	};
 
@@ -84,8 +83,7 @@ bool User::signIn(uInfosPtr &myUInfos, sqlPtr &mySql) {
 	std::string request = rb.getFinalRequest();
 
 	if (!mySql->SqlQuery(request)) {
-		std::cout << "Error: SqlQuery not working" << std::endl;
-		return false;
+		ERRQUERYSQL
 	}
 	this->_logged = true;
 	return true;

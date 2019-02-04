@@ -9,6 +9,7 @@ include_directories(
 	./Parser/
 	./SqlWrap/
 	./Users/
+	./EncodePassword/
 	${PATH_RES}/mysql/include/
 )
 
@@ -20,6 +21,7 @@ add_executable(interactiveshell
 	./SqlWrap/SqlWrap.cpp
 	./SqlWrap/DatabaseInfos.cpp
 	./SqlWrap/RequestBuilder.cpp
+	./EncodePassword/EncodePassword.cpp
 )
 
 target_link_libraries(interactiveshell ${PATH_RES}/mysql/lib/libmysql.lib)
