@@ -36,7 +36,27 @@ bool User::checkSignIn(uInfosPtr &myUInfos) {
 	}
 	return true;
 }
+
 bool User::signIn(uInfosPtr &myUInfos, sqlPtr &mySql) {
 	if (!this->checkSignIn(myUInfos))
 		return false;
+
+	std::map<std::string,std::string> param = {
+		{"id", "NULL"},
+		{"username", myUInfos->getUsername()},
+		{"password", myUInfos->getPasswordOne()},
+		{"mail", myUInfos->getMail()}
+	};
+
+	RequestBuilder rb(param, RequestType::INSERT, "users");
+	rb.buildRequest();
+
+	std::string request = rb.getFinalRequest();
+
+	if (!mySql->SqlQuery(request)) {
+		std::cout << "Error: SqlQuery not working" << std::endl;
+		return false;
+	}
+	this->_isLogged = true;
+	return true;
 }

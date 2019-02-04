@@ -35,10 +35,9 @@ bool SqlWrap::SqlQuery(const std::string &myQuery) {
 	if (mysql_query(
 		&(this->_mysql),
 		myQuery.c_str()
-	) != 0)
+	) != 0) {
 		return false;
-	if ((this->_result = mysql_use_result(&(this->_mysql))) == NULL)
-		return false;
+	}
 	return true;
 }
 
@@ -67,8 +66,9 @@ void SqlWrap::getColNameFromLastResult() {
 	}
 }
 
-
-std::vector<std::map<std::string,std::string>> SqlWrap::fetchResult() {
+bool SqlWrap::fetchResult() {
+	if ((this->_result = mysql_use_result(&(this->_mysql))) == NULL)
+		return false;
 	this->_nbFields = mysql_num_fields(this->_result);
 	std::vector<std::map<std::string,std::string>> result;
 	std::map<std::string, std::string> tpsData;
@@ -76,21 +76,20 @@ std::vector<std::map<std::string,std::string>> SqlWrap::fetchResult() {
 	this->getColNameFromLastResult();
 	while (this->_row = mysql_fetch_row(this->_result)) {
 		if ((this->_colLen = mysql_fetch_lengths(this->_result)) == NULL)
-			return {};
+			return false;
 		for(int i = 0; i < this->_nbFields; i++) {
 			if ((int)this->_colLen[i] != 0) {
 				if ((int)(this->_colNames.size()) < i)
-					return {};
+					return false;
 				tpsData[this->_colNames.at(i)] = std::string(this->_row[i]);
 			}
 		}
 		result.push_back(tpsData);
 		tpsData.clear();
 	}
-	return result;
+	this->_tabFetchResults = result;
+	return true;
 }
-
-
 
 void SqlWrap::clearResults() {
 	mysql_free_result(this->_result);

@@ -3,6 +3,7 @@
 
 #include "SqlWrap.hpp"
 #include "UsersInfos.hpp"
+#include "RequestBuilder.hpp"
 
 typedef std::shared_ptr<SqlWrap> sqlPtr;
 typedef std::shared_ptr<UsersInfos> uInfosPtr;

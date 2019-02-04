@@ -16,6 +16,7 @@ add_executable(interactiveshell
 	./main.cpp
 	#./Core/Core.cpp
 	./Users/User.cpp
+	./Users/UsersInfos.cpp
 	./SqlWrap/SqlWrap.cpp
 	./SqlWrap/DatabaseInfos.cpp
 	./SqlWrap/RequestBuilder.cpp
