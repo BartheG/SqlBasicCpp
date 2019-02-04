@@ -5,14 +5,20 @@ Core::Core()
 	_ActualState = State::UNCONNECTED;
 	_MapState[State::CONNECTED] = std::bind(&Core::runConnected, this);
 	_MapState[State::UNCONNECTED] = std::bind(&Core::runUnConnected, this);
+	_User = std::make_shared<User>();
+	_MapUser["login"] = std::bind(&User::logIn, &_User);
+	_MapUser["signin"] = std::bind(&User::logIn, &_User);
 }
 
-Core::~Core()
-{
-}
+Core::~Core() {}
 
 void Core::runConnected() {
-	std::cout << "Run connected" << std::endl;
+	std::cout << RUNCO_LOGINSIGNIN << std::endl;
+	std::cout << RUNCO_EXIT << std::endl;
+
+	std::cin >> this->_userInput;
+	this->_MapUser[this->_userInput]();
+	this->_ActualState = State::CONNECTED;
 }
 
 void Core::runUnConnected() {
