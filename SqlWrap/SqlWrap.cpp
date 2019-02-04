@@ -69,7 +69,8 @@ void SqlWrap::getColNameFromLastResult() {
 bool SqlWrap::fetchResult() {
 	if ((this->_result = mysql_use_result(&(this->_mysql))) == NULL)
 		return false;
-	this->_nbFields = mysql_num_fields(this->_result);
+	if ((this->_nbFields = mysql_num_fields(this->_result)) == 0)
+		return false;
 	std::vector<std::map<std::string,std::string>> result;
 	std::map<std::string, std::string> tpsData;
 

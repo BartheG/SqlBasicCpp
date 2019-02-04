@@ -8,8 +8,8 @@ class UsersInfos {
 		UsersInfos(
 			const std::string &username,
 			const std::string &passwordOne,
-			const std::string &passwordTwo = nullptr,
-			const std::string &mail = nullptr
+			const std::string &passwordTwo = "",
+			const std::string &mail = ""
 		);
 		~UsersInfos();
 		std::string getUsername() const { return this->_username; }

@@ -6,7 +6,8 @@
 #include <functional>
 
 enum RequestType {
-	INSERT
+	INSERT,
+	SELECT
 };
 
 class RequestBuilder {
@@ -14,11 +15,13 @@ class RequestBuilder {
 		RequestBuilder(const std::map<std::string,std::string> &param, RequestType type, const std::string &tableName = "");
 		~RequestBuilder();
 		void buildRequest();
-		void buildInsertRequest();
-		std::string formatWithQuote(const std::string &toFormat);
-		std::string formatAsChar(const std::string &toFormat);
 		std::string getFinalRequest() const { return this->_finalRequest; };
 	private:
+		void buildInsertRequest();
+		void buildSelectRequest();
+		std::string formatWithQuote(const std::string &toFormat);
+		std::string formatAsChar(const std::string &toFormat);
+
 		std::map<std::string,std::string> _param;
 		std::map<RequestType, std::function<void(void)>> _selectRequest;
 		std::string _tableName;

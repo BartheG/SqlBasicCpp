@@ -2,7 +2,7 @@
 
 User::User()
 {
-	_isLogged = false;
+	_logged = false;
 }
 
 User::~User() {}
@@ -18,7 +18,37 @@ bool User::checkLogIn(uInfosPtr &myUInfos) {
 bool User::logIn(uInfosPtr &myUInfos, sqlPtr &mySql) {
 	if (!this->checkLogIn(myUInfos))
 		return false;
+
+	std::string whereCondition = "username='"
+	+ myUInfos->getUsername()
+	+ "' AND password='"
+	+ myUInfos->getPasswordOne()
+	+ "'";
+	std::map<std::string,std::string> param = {
+		{"toSelect", "*"},
+		{"where", whereCondition}
+	};
+
+	RequestBuilder rb(param, RequestType::SELECT, "users");
+	rb.buildRequest();
+	std::string request = rb.getFinalRequest();
+
+	if (!mySql->SqlQuery(request)) {
+		std::cout << "Error: SqlQuery not working" << std::endl;
+		return false;
+	}
+	if (!mySql->fetchResult()) {
+		std::cout << "Error: fetch results" << std::endl;
+		return false;
+	}
+	if (mySql->getTabFetchResults().empty()) {
+		std::cout << "Error: incorrect username/password" << std::endl;
+		return false;
+	}
+	this->_logged = true;
+	return true;
 }
+
 bool User::checkSignIn(uInfosPtr &myUInfos) {
 	if (!myUInfos->isSignIn()) {
 		std::cout << "Error: User OBJECT not in signIn mode" << std::endl;
@@ -57,6 +87,6 @@ bool User::signIn(uInfosPtr &myUInfos, sqlPtr &mySql) {
 		std::cout << "Error: SqlQuery not working" << std::endl;
 		return false;
 	}
-	this->_isLogged = true;
+	this->_logged = true;
 	return true;
 }

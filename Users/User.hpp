@@ -12,12 +12,14 @@ class User {
 	public:
 		User();
 		~User();
-		bool checkLogIn(uInfosPtr &myUInfos);
 		bool logIn(uInfosPtr &myUInfos, sqlPtr &mySql);
-		bool checkSignIn(uInfosPtr &myUInfos);
 		bool signIn(uInfosPtr &myUInfos, sqlPtr &mySql);
+		bool isLogged() const { return this->_logged; };
 	private:
-		bool _isLogged;
+		bool checkLogIn(uInfosPtr &myUInfos);
+		bool checkSignIn(uInfosPtr &myUInfos);
+
+		bool _logged;
 };
 
 #endif /* !USER_HPP_ */

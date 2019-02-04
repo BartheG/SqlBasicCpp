@@ -8,6 +8,7 @@ RequestBuilder::RequestBuilder(
 	_type(type),
 	_tableName(tableName) {
 	_selectRequest[RequestType::INSERT] = std::bind(&RequestBuilder::buildInsertRequest, this);
+	_selectRequest[RequestType::SELECT] = std::bind(&RequestBuilder::buildSelectRequest, this);
 }
 
 RequestBuilder::~RequestBuilder() {}
@@ -24,6 +25,16 @@ std::string RequestBuilder::formatAsChar(const std::string &toFormat) {
 	return (toFormat == "NULL") ? toFormat : std::string("'"+toFormat+"'");
 }
 
+void RequestBuilder::buildSelectRequest() {
+	std::string request = "SELECT " + this->_param["toSelect"] + " FROM `" + this->_tableName+ "`";
+
+	if (this->_param.find("where") != this->_param.end()) {
+		request+=" WHERE ";
+		request+=this->_param["where"];
+	}
+	request+=";";
+	this->_finalRequest = request;
+}
 
 void RequestBuilder::buildInsertRequest() {
 	std::map<std::string, std::string>::iterator itParam = this->_param.begin();
