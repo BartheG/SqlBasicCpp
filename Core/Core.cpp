@@ -1,28 +1,31 @@
 #include "Core.hpp"
 
-Core::Core()
+Core::Core(std::shared_ptr<SqlWrap> &WSql) : _WSql(WSql)
 {
 	_ActualState = State::UNCONNECTED;
+
 	_MapState[State::CONNECTED] = std::bind(&Core::runConnected, this);
 	_MapState[State::UNCONNECTED] = std::bind(&Core::runUnConnected, this);
-	_User = std::make_shared<User>();
-	_MapUser["login"] = std::bind(&User::logIn, &_User);
-	_MapUser["signin"] = std::bind(&User::logIn, &_User);
+
+	_Shell = std::make_shared<ReadInput>();
+	_UCmd = std::make_shared<UnconnectedCmd>(_WSql);
 }
 
 Core::~Core() {}
 
 void Core::runConnected() {
-	std::cout << RUNCO_LOGINSIGNIN << std::endl;
-	std::cout << RUNCO_EXIT << std::endl;
-
-	std::cin >> this->_userInput;
-	this->_MapUser[this->_userInput]();
-	this->_ActualState = State::CONNECTED;
 }
 
 void Core::runUnConnected() {
-	std::cout << "Run unconnected" << std::endl;
+	std::cout << RUNCO_LOGINSIGNIN << std::endl;
+	std::cout << RUNCO_EXIT << std::endl;
+
+	std::string shellRt = this->_Shell->wrapInputCmd();
+	if (shellRt == "exit") {
+		this->_ActualState = State::QUIT;
+	} else {
+		this->_ActualState = (this->_UCmd->makeCmd(shellRt)) ? State::CONNECTED : State::UNCONNECTED;
+	}
 }
 
 bool Core::shellExecution() {

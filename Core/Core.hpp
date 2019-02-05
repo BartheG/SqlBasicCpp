@@ -8,6 +8,9 @@
 #include <string>
 
 #include "User.hpp"
+#include "ReadInput.hpp"
+#include "UnconnectedCmd.hpp"
+#include "SqlWrap.hpp"
 
 #define RUNCO_LOGINSIGNIN "Enter \"login\" or \"signin\" to enter in the interactive shell"
 #define RUNCO_EXIT "Enter exit to quit the program"
@@ -20,7 +23,7 @@ enum State {
 
 class Core {
 	public:
-		Core();
+		Core(std::shared_ptr<SqlWrap> &WSql);
 		~Core();
 		bool shellExecution();
 		void runConnected();
@@ -28,9 +31,11 @@ class Core {
 	private:
 		State _ActualState;
 		std::string _userInput;
-		std::shared_ptr<User> _User;
 		std::map<State, std::function<void(void)>> _MapState;
-		std::map<std::string, std::function<void(void)>> _MapUser;
+
+		std::shared_ptr<SqlWrap> _WSql;
+		std::shared_ptr<UnconnectedCmd> _UCmd;
+		std::shared_ptr<ReadInput> _Shell;
 };
 
 #endif /* !CORE_HPP_ */
