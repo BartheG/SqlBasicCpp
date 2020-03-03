@@ -31,7 +31,7 @@ class Core {
 	private:
 		State _ActualState;
 		std::string _userInput;
-		std::map<State, std::function<void(void)>> _MapState;
+		std::map<State, std::function<void(void)> > _MapState;
 
 		std::shared_ptr<SqlWrap> _WSql;
 		std::shared_ptr<UnconnectedCmd> _UCmd;

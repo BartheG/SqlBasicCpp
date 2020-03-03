@@ -23,7 +23,7 @@ class RequestBuilder {
 		std::string formatAsChar(const std::string &toFormat);
 
 		std::map<std::string,std::string> _param;
-		std::map<RequestType, std::function<void(void)>> _selectRequest;
+		std::map<RequestType, std::function<void(void)> > _selectRequest;
 		std::string _tableName;
 		std::string _finalRequest;
 		RequestType _type;

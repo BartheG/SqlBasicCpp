@@ -75,7 +75,7 @@ bool SqlWrap::fetchResult() {
 	std::map<std::string, std::string> tpsData;
 
 	this->getColNameFromLastResult();
-	while (this->_row = mysql_fetch_row(this->_result)) {
+	while ((this->_row = mysql_fetch_row(this->_result))) {
 		if ((this->_colLen = mysql_fetch_lengths(this->_result)) == NULL)
 			return false;
 		for(int i = 0; i < this->_nbFields; i++) {

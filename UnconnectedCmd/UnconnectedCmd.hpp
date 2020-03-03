@@ -18,7 +18,7 @@ class UnconnectedCmd {
 		std::shared_ptr<ReadInput> _Shell;
 		std::shared_ptr<User> _User;
 		std::shared_ptr<SqlWrap> _mySql;
-		std::map<std::string,std::function<bool(void)>> _selectCmd;
+		std::map<std::string, std::function<bool(void) > > _selectCmd;
 };
 
 #endif /* !UNCONNECTEDCMD_HPP_ */

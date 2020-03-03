@@ -4,7 +4,7 @@
 #include "SqlWrap.hpp"
 
 int main(int ac, char **av) {
-	std::shared_ptr<DatabaseInfos> dbInfos = std::make_shared<DatabaseInfos>("127.0.0.1","root","@8Felhdqb");
+	std::shared_ptr<DatabaseInfos> dbInfos = std::make_shared<DatabaseInfos>("127.0.0.1","username","password");
 	std::shared_ptr<SqlWrap> s1 = std::make_shared<SqlWrap>(dbInfos);
 
 	if (!s1->SqlConnexionToDatabase("interactiveshell")) {

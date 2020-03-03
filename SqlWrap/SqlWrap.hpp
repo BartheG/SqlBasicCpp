@@ -21,12 +21,12 @@ class SqlWrap {
 		bool SqlQuery(const std::string &myQuery);
 		bool fetchResult();
 		void getColNameFromLastResult();
-		std::vector<std::map<std::string,std::string>> getTabFetchResults() const { return this->_tabFetchResults; };
+		std::vector<std::map<std::string,std::string> > getTabFetchResults() const { return this->_tabFetchResults; };
 		void clearResults();
 	private:
 		std::shared_ptr<DatabaseInfos> _dbInfos;
 		std::vector<std::string> _colNames;
-		std::vector<std::map<std::string,std::string>> _tabFetchResults;
+		std::vector<std::map<std::string,std::string> > _tabFetchResults;
 
 		MYSQL _mysql;
 		MYSQL_RES *_result;
@@ -36,6 +36,6 @@ class SqlWrap {
 		unsigned long *_colLen;
 };
 
-void displayMap(std::vector<std::map<std::string,std::string>> result);
+void displayMap(std::vector<std::map<std::string,std::string> > result);
 
 #endif /* !SQLWRAP_HPP_ */
